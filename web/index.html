@@ -17,13 +17,16 @@
 
     <section class="step quick" aria-labelledby="s0">
       <h2 id="s0"><span class="num">⚡</span> Najhitreje: zaznamek za WISE</h2>
-      <p>Z zaznamkom ti ni treba ničesar prenašati ali nalagati – urnik se prebere neposredno z WISE.</p>
+      <p>Z zaznamkom ti ni treba ničesar prenašati ali nalagati – urnik se prebere neposredno z WISE. Obstajata dva:</p>
+      <ul class="steps">
+        <li><a id="bookmarklet" class="button secondary bookmarklet" href="#" title="Povleci me v vrstico z zaznamki">📅 Odpri urnik WISE tukaj</a> – odpre to stran z naloženim urnikom; nastavitve izbereš sproti.</li>
+        <li><a class="button primary" href="#s3">⬇️ Takoj prenesi</a> – prenese očiščen urnik brez vmesne strani, z nastavitvami, ki jih izbereš v 3. koraku (gumb je tam).</li>
+      </ul>
       <ol class="steps">
-        <li>Povleci gumb <a id="bookmarklet" class="button primary bookmarklet" href="#" title="Povleci me v vrstico z zaznamki">📅 Očisti urnik WISE</a> v vrstico z zaznamki (enkrat; če je ne vidiš: ⌘⇧B / Ctrl+Shift+B).</li>
-        <li>Na <a href="https://www.wise-tt.com/web/umfs/" target="_blank" rel="noopener">wise-tt.com</a> odpri <strong>svoj</strong> urnik (povezava vsebuje <code>t=</code>).</li>
-        <li>Klikni zaznamek – v istem zavihku se odpre ta stran z že naloženim urnikom.</li>
+        <li>Gumb povleci v vrstico z zaznamki (enkrat; če je ne vidiš: ⌘⇧B / Ctrl+Shift+B).</li>
+        <li>Na <a href="https://www.wise-tt.com/web/umfs/" target="_blank" rel="noopener">wise-tt.com</a> odpri <strong>svoj</strong> urnik (povezava vsebuje <code>t=</code>) in klikni zaznamek.</li>
       </ol>
-      <p class="hint">Zaznamek samo prebere urnik, ki ga že vidiš, in ga preda tej strani; nič se ne pošilja drugam. Na telefonu je ročni način spodaj enostavnejši.</p>
+      <p class="hint">Zaznamek samo prebere urnik, ki ga že vidiš; nič se ne pošilja drugam. Na telefonu je ročni način spodaj enostavnejši.</p>
     </section>
 
     <section class="step" aria-labelledby="s1">
@@ -62,11 +65,17 @@
         <label class="check alarm"><input type="checkbox" id="opt-alarm" checked> Opomnik
           <input type="number" id="opt-alarm-min" min="0" max="1440" value="15" aria-label="Minut pred začetkom"> min prej</label>
       </div>
-      <details id="abbr-box">
+      <details id="abbr-box" open>
         <summary>Kratice predmetov <span class="muted" id="abbr-count"></span></summary>
-        <p class="hint">Predmeti brez kratice ostanejo s polnim imenom. Kratice si brskalnik zapomni.</p>
-        <div id="abbr-list" class="abbr-list"><p class="muted">Najprej naloži urnik.</p></div>
+        <p class="hint">Ime predmeta vpiši tako, kot je v WISE (velike/male črke niso pomembne). Predmeti iz naloženega urnika se dodajo sami; predmeti brez kratice ostanejo s polnim imenom. Brskalnik si seznam zapomni.</p>
+        <div id="abbr-list" class="abbr-list"></div>
+        <button id="abbr-add" class="button secondary small" type="button">+ Dodaj predmet</button>
       </details>
+      <div class="instant">
+        <p><strong>Zaznamek s temi nastavitvami:</strong>
+          <a id="bookmarklet-instant" class="button primary bookmarklet" href="#" title="Povleci me v vrstico z zaznamki">⬇️ Prenesi urnik WISE</a></p>
+        <p class="hint">Povleci ga v zaznamke in ga klikni na svojem urniku na wise-tt.com – očiščena datoteka se prenese takoj. Ko spremeniš nastavitve ali kratice, ga povleci znova (starega izbriši).</p>
+      </div>
     </section>
 
     <section class="step result" aria-labelledby="s4" id="result" hidden>

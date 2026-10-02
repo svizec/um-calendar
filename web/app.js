@@ -13,7 +13,14 @@ const store = {
   },
 };
 
-const state = { text: null, fileName: null, abbreviations: store.load().abbreviations ?? {} };
+// Abbreviation list: [{ subject, abbr }]. Older versions stored a { subject: abbr } map.
+function loadAbbrList() {
+  const saved = store.load();
+  if (Array.isArray(saved.abbrList)) return saved.abbrList;
+  return Object.entries(saved.abbreviations ?? {}).map(([subject, abbr]) => ({ subject, abbr }));
+}
+
+const state = { text: null, fileName: null, abbrList: loadAbbrList() };
 
 // --- step 1: WISE id / link ---
 function updateLink() {
@@ -43,25 +50,48 @@ function loadText(text, name) {
   state.text = text;
   state.fileName = name;
   $('file-name').textContent = name;
+  mergeSubjectsFromFile();
   renderAbbreviations();
   update();
 }
 
 // --- bookmarklet: runs on wise-tt.com (same origin as the timetable, so no CORS problem), gzips the
 // timetable and opens this page with it in the URL fragment. The fragment never leaves the browser.
-const PAGE_URL = `${location.origin}${location.pathname}`;
+const PAGE_URL = new URL('./', location.href).href;
+const MODULE_URL = new URL('./src/index.js', location.href).href;
+
+const BOOKMARKLET_HEAD = `if(!/(^|\\.)wise-tt\\.com$/.test(location.hostname)){alert('Odpri svoj urnik na wise-tt.com in klikni zaznamek tam.');return}`
+  + `const t=new URL(location.href).searchParams.get('t')||(document.querySelector('input[name=t]')||{}).value;`
+  + `if(!t){alert('Ne najdem ID-ja urnika (t=). Odpri svoj urnik.');return}`
+  + `const s=(location.pathname.match(/\\/web\\/([^/]+)/)||[])[1]||'umfs';`
+  + `const r=await fetch('/web/'+s+'/reports?t='+encodeURIComponent(t)+'&lang=sl&format=ics');`;
 
 function bookmarkletCode() {
   const page = JSON.stringify(PAGE_URL);
-  const src = `(async()=>{if(!/(^|\\.)wise-tt\\.com$/.test(location.hostname)){alert('Odpri svoj urnik na wise-tt.com in klikni zaznamek tam.');return}`
-    + `const t=new URL(location.href).searchParams.get('t')||(document.querySelector('input[name=t]')||{}).value;`
-    + `if(!t){alert('Ne najdem ID-ja urnika (t=). Odpri svoj urnik.');return}`
-    + `const s=(location.pathname.match(/\\/web\\/([^/]+)/)||[])[1]||'umfs';`
-    + `const r=await fetch('/web/'+s+'/reports?t='+encodeURIComponent(t)+'&lang=sl&format=ics');`
+  const src = `(async()=>{${BOOKMARKLET_HEAD}`
     + `const z=new Uint8Array(await new Response(r.body.pipeThrough(new CompressionStream('gzip'))).arrayBuffer());`
     + `let b='';for(let i=0;i<z.length;i+=32768)b+=String.fromCharCode(...z.subarray(i,i+32768));`
     + `location.href=${page}+'#wise='+encodeURIComponent(t)+'&ics='+btoa(b).replace(/\\+/g,'-').replace(/\\//g,'_').replace(/=+$/,'')})()`;
   return `javascript:${encodeURIComponent(src)}`;
+}
+
+/**
+ * "Instant" bookmarklet: same start, then imports the cleaning module from this site (GitHub Pages
+ * sends CORS headers), cleans with the options baked in at drag time and downloads the file.
+ */
+function instantBookmarkletCode() {
+  const src = `(async()=>{${BOOKMARKLET_HEAD}`
+    + `const x=await r.text();const m=await import(${JSON.stringify(MODULE_URL)});const c=${JSON.stringify(options())};`
+    + `const o=m.cleanText(x,c);const ics=m.renderCalendar(o.events,{name:o.owner?'Urnik – '+o.owner:'Urnik',timezones:o.timezones});`
+    + `const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([ics],{type:'text/calendar;charset=utf-8'}));`
+    + `a.download='urnik-'+t+'-clean.ics';document.body.appendChild(a);a.click();a.remove()`
+    + `})().catch(e=>alert('Urnika ni bilo mogoče prenesti: '+e.message))`;
+  return `javascript:${encodeURIComponent(src)}`;
+}
+
+function refreshBookmarklets() {
+  $('bookmarklet').href = bookmarkletCode();
+  $('bookmarklet-instant').href = instantBookmarkletCode();
 }
 
 async function receiveFromWise() {
@@ -76,7 +106,11 @@ async function receiveFromWise() {
     $('wise-id').value = m[1];
     updateLink();
     loadText(text, `urnik-${m[1]}.ics`);
-    $('result').scrollIntoView({ behavior: 'smooth' });
+    const notice = document.createElement('p');
+    notice.className = 'notice';
+    notice.textContent = `Urnik ${m[1]} je naložen z WISE. Preveri nastavitve in kratice, nato spodaj klikni »Prenesi očiščen urnik«.`;
+    $('s3').after(notice);
+    $('s3').scrollIntoView({ behavior: 'smooth' });
   } catch {
     $('error').textContent = 'Urnika z WISE ni bilo mogoče prebrati. Poskusi znova ali uporabi ročni način.';
     $('error').hidden = false;
@@ -92,7 +126,9 @@ function options() {
     teachers: { show: $('opt-teachers').checked },
     title: { style: $('opt-title').value },
     alarmMinutes: alarm,
-    abbreviations: Object.fromEntries(Object.entries(state.abbreviations).filter(([, v]) => v.trim())),
+    abbreviations: Object.fromEntries(
+      state.abbrList.filter((r) => r.subject.trim() && r.abbr.trim()).map((r) => [r.subject.trim().toUpperCase(), r.abbr.trim()]),
+    ),
   };
 }
 
@@ -113,47 +149,79 @@ function restoreOptions() {
   if (saved.wiseId) $('wise-id').value = saved.wiseId;
 }
 
-function renderAbbreviations() {
-  const list = $('abbr-list');
+function saveAbbrList() {
+  store.save({ abbrList: state.abbrList });
+}
+
+/** Add subjects of the loaded timetable that are not in the list yet (with an empty abbreviation). */
+function mergeSubjectsFromFile() {
   let subjects = [];
   try {
     subjects = [...new Set(readWise(state.text).events.filter((e) => e.kind === 'class' && e.subject).map((e) => e.subject))].sort();
   } catch {
-    /* reported by update() */
-  }
-  list.replaceChildren();
-  if (!subjects.length) {
-    list.innerHTML = '<p class="muted">V urniku ni predmetov.</p>';
-    return;
-  }
-  for (const subject of subjects) {
-    const row = document.createElement('label');
-    row.className = 'abbr-row';
-    const name = document.createElement('span');
-    name.textContent = subject;
-    const input = document.createElement('input');
-    input.type = 'text';
-    input.maxLength = 16;
-    input.placeholder = suggest(subject);
-    input.value = state.abbreviations[subject] ?? '';
-    input.setAttribute('aria-label', `Kratica za ${subject}`);
-    input.addEventListener('input', () => {
-      state.abbreviations[subject] = input.value.trim();
-      store.save({ abbreviations: state.abbreviations });
-      updateAbbrCount();
-      update();
-    });
-    row.append(name, input);
-    list.append(row);
+    return; // reported by update()
   }
   state.subjects = subjects;
+  const known = new Set(state.abbrList.map((r) => r.subject.trim().toUpperCase()));
+  for (const subject of subjects) if (!known.has(subject.toUpperCase())) state.abbrList.push({ subject, abbr: '' });
+}
+
+function renderAbbreviations() {
+  const list = $('abbr-list');
+  list.replaceChildren();
+  if (!state.abbrList.length) {
+    list.innerHTML = '<p class="muted">Ni predmetov. Naloži urnik ali dodaj predmet.</p>';
+  }
+  state.abbrList.forEach((row, i) => {
+    const el = document.createElement('div');
+    el.className = 'abbr-row edit';
+    const subject = document.createElement('input');
+    subject.type = 'text';
+    subject.value = row.subject;
+    subject.placeholder = 'IME PREDMETA';
+    subject.setAttribute('aria-label', 'Ime predmeta');
+    const abbr = document.createElement('input');
+    abbr.type = 'text';
+    abbr.maxLength = 16;
+    abbr.value = row.abbr;
+    abbr.placeholder = suggest(row.subject);
+    abbr.setAttribute('aria-label', `Kratica za ${row.subject || 'predmet'}`);
+    const remove = document.createElement('button');
+    remove.type = 'button';
+    remove.className = 'button secondary remove';
+    remove.textContent = '×';
+    remove.title = 'Odstrani';
+    remove.setAttribute('aria-label', `Odstrani ${row.subject || 'predmet'}`);
+    subject.addEventListener('input', () => {
+      row.subject = subject.value;
+      abbr.placeholder = suggest(row.subject);
+      abbreviationsChanged();
+    });
+    abbr.addEventListener('input', () => {
+      row.abbr = abbr.value;
+      abbreviationsChanged();
+    });
+    remove.addEventListener('click', () => {
+      state.abbrList.splice(i, 1);
+      abbreviationsChanged();
+      renderAbbreviations();
+    });
+    el.append(subject, abbr, remove);
+    list.append(el);
+  });
   updateAbbrCount();
 }
 
+function abbreviationsChanged() {
+  saveAbbrList();
+  updateAbbrCount();
+  update();
+}
+
 function updateAbbrCount() {
-  const subjects = state.subjects ?? [];
-  const filled = subjects.filter((s) => state.abbreviations[s]).length;
-  $('abbr-count').textContent = subjects.length ? `(${filled}/${subjects.length})` : '';
+  const total = state.abbrList.filter((r) => r.subject.trim()).length;
+  const filled = state.abbrList.filter((r) => r.subject.trim() && r.abbr.trim()).length;
+  $('abbr-count').textContent = total ? `(${filled}/${total})` : '';
 }
 
 /** Placeholder suggestion: initials of the significant words. */
@@ -167,6 +235,7 @@ let lastResult = null;
 
 function update() {
   saveOptions();
+  refreshBookmarklets();
   if (!state.text) return;
   $('error').hidden = true;
   try {
@@ -217,10 +286,18 @@ function save() {
 // --- wiring ---
 restoreOptions();
 updateLink();
-$('bookmarklet').href = bookmarkletCode();
-$('bookmarklet').addEventListener('click', (e) => {
-  e.preventDefault();
-  alert('Zaznamek povleci v vrstico z zaznamkov, nato ga klikni na svojem urniku na wise-tt.com.');
+renderAbbreviations();
+refreshBookmarklets();
+for (const id of ['bookmarklet', 'bookmarklet-instant']) {
+  $(id).addEventListener('click', (e) => {
+    e.preventDefault();
+    alert('Zaznamek povleci v vrstico z zaznamki, nato ga klikni na svojem urniku na wise-tt.com.');
+  });
+}
+$('abbr-add').addEventListener('click', () => {
+  state.abbrList.push({ subject: '', abbr: '' });
+  renderAbbreviations();
+  $('abbr-list').lastElementChild?.querySelector('input')?.focus();
 });
 receiveFromWise();
 $('wise-id').addEventListener('input', updateLink);

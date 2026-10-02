@@ -5,6 +5,17 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versions: [Sem
 
 ## [Unreleased]
 
+## [0.3.1] - 2026-10-02
+
+### Added
+- Web page: "⬇️ Prenesi urnik WISE" bookmarklet that downloads the cleaned file directly on
+  wise-tt.com, with the current options and abbreviations baked in.
+- Web page: abbreviation list can be edited freely (add / remove subjects, also before loading a timetable);
+  subjects of a loaded timetable are added automatically.
+
+### Changed
+- After the "open here" bookmarklet the page scrolls to the settings and shows a short notice.
+
 ## [0.3.0] - 2026-10-02
 
 ### Added

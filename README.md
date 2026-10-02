@@ -16,8 +16,11 @@ cleaned:  VZVRATNO INŽENIRSTVO (VI) - LV3 (3h)          S18-4
 
 **https://svizec.github.io/um-calendar/**
 
-- **Bookmarklet (fastest):** drag *📅 Očisti urnik WISE* from the page to your bookmarks bar once, open
-  your timetable on wise-tt.com and click it – the page opens with your timetable already loaded.
+- **Bookmarklets (fastest):** drag one to your bookmarks bar once, open your timetable on wise-tt.com
+  and click it.
+  - *📅 Odpri urnik WISE tukaj* opens the page with the timetable loaded (choose options there).
+  - *⬇️ Prenesi urnik WISE* (in step 3) downloads the cleaned file at once, with the options and
+    abbreviations that were set when you dragged it.
 - **Manual:** enter your WISE id (`t=`), download the `.ics`, drop it on the page.
 
 Then pick options, download the cleaned file and import it into your calendar. Nothing leaves your browser.
