@@ -5,6 +5,12 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versions: [Sem
 
 ## [Unreleased]
 
+## [0.4.3] - 2026-10-02
+
+### Changed
+- Web: removed the "Prikaži opis v predogledu" switch; descriptions show on hover, and inline together
+  with the original text when "👁 Prikaži original v predogledu" is on. That switch now fits on one line.
+
 ## [0.4.2] - 2026-10-02
 
 ### Fixed
