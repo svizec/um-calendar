@@ -5,7 +5,7 @@
 //
 // Writes test/fixtures/feed.ics (current feed format) and test/fixtures/export.ics
 // (the same data converted to the older one-off export format).
-// Never point this at the maintainer's own timetable (see AGENTS.md).
+// Never point this at the maintainer's own timetable.
 
 import { createHash } from 'node:crypto';
 import { writeFileSync } from 'node:fs';

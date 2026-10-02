@@ -5,6 +5,9 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versions: [Sem
 
 ## [Unreleased]
 
+### Removed
+- Agent instruction files are no longer part of the repository (kept locally).
+
 ## [0.4.7] - 2026-10-02
 
 ### Fixed

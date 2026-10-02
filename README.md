@@ -12,7 +12,7 @@ cleaned:  VZVRATNO INŽENIRSTVO (VI) - LV3 (3h)          S18-4
 - numbers sessions per subject, type and group set (LV1, LV2 …) and counts school hours
 - compacts groups, optional subject abbreviations, reminders
 
-## For colleagues: web page
+## Web page
 
 **https://svizec.github.io/um-calendar/**
 
@@ -45,4 +45,4 @@ npm test       # node:test
 npm run web    # local web page at http://localhost:8080
 ```
 
-See [AGENTS.md](AGENTS.md) for structure and rules, [docs/FORMATS.md](docs/FORMATS.md) for the WISE formats.
+See [docs/FORMATS.md](docs/FORMATS.md) for the WISE formats and [docs/DECISIONS.md](docs/DECISIONS.md) for design decisions.
