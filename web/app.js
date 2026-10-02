@@ -148,8 +148,8 @@ function options() {
   };
 }
 
-// opt-original only changes the preview; it is not part of options() and not baked into bookmarklets
-const OPTION_IDS = ['opt-absences', 'opt-reserved', 'opt-groups', 'opt-teachers', 'opt-title', 'opt-alarm', 'opt-alarm-min', 'opt-original'];
+// opt-desc and opt-original only change the preview; they are not part of options() and not baked into bookmarklets
+const OPTION_IDS = ['opt-absences', 'opt-reserved', 'opt-groups', 'opt-teachers', 'opt-title', 'opt-alarm', 'opt-alarm-min', 'opt-desc', 'opt-original'];
 
 function saveOptions() {
   store.save({ options: Object.fromEntries(OPTION_IDS.map((id) => [id, $(id).type === 'checkbox' ? $(id).checked : $(id).value])) });
@@ -303,7 +303,8 @@ function previewRow(e, { original, removed } = {}) {
     } else {
       // title plus the event description (groups, co-teachers) as it will appear in the calendar
       td.append(div('ev-title', e.summary));
-      if (e.description) td.append(div('ev-desc', e.description));
+      if (e.description && $('opt-desc').checked) td.append(div('ev-desc', e.description));
+      else if (e.description) tr.title = e.description; // compact rows: description on hover
       if (original) {
         const raw = original.raw;
         const text = [raw.summary, raw.description, raw.location && raw.location !== e.location ? `Prostor: ${raw.location}` : null].filter(Boolean).join('\n');

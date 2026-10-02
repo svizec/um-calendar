@@ -68,6 +68,7 @@
           </select></label>
         <label class="check alarm"><input type="checkbox" id="opt-alarm" checked> Opomnik
           <input type="number" id="opt-alarm-min" min="0" max="1440" value="15" aria-label="Minut pred začetkom"> min prej</label>
+        <label class="check"><input type="checkbox" id="opt-desc"> Prikaži opis v predogledu</label>
         <label class="check"><input type="checkbox" id="opt-original"> 👁 Prikaži original v predogledu</label>
       </div>
       <details id="abbr-box" open>
@@ -90,7 +91,7 @@
       <p class="hint">Datoteko uvoziš v koledar (Apple Koledar: Datoteka → Uvozi; Outlook: Datoteka → Odpri in izvozi → Uvoz). Za samodejne posodobitve glej <a href="https://github.com/svizec/um-calendar">README</a>.</p>
       <div class="table-wrap">
         <table>
-          <thead><tr><th>Datum</th><th>Čas</th><th>Naslov in opis</th><th>Prostor</th></tr></thead>
+          <thead><tr><th>Datum</th><th>Čas</th><th>Naslov</th><th>Prostor</th></tr></thead>
           <tbody id="preview"></tbody>
         </table>
       </div>

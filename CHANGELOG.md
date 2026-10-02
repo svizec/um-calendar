@@ -5,6 +5,12 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versions: [Sem
 
 ## [Unreleased]
 
+## [0.4.1] - 2026-10-02
+
+### Changed
+- Web: event descriptions in the preview are shown under the title only with "Prikaži opis v predogledu";
+  otherwise rows stay compact and the description appears on hover.
+
 ## [0.4.0] - 2026-10-02
 
 ### Added
