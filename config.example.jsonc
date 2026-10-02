@@ -1,0 +1,21 @@
+// Example umcal config. Comments are allowed. All keys are optional – see docs/CONFIG.md.
+{
+  // Whose timetable: "t" is the number after t= in the WISE link.
+  "source": { "school": "umfs", "t": 426, "lang": "sl" },
+
+  // Busy blocks to drop.
+  "remove": { "absences": true, "reserved": true },
+
+  // "full" = FULL NAME (ABBR) · "short" = ABBR · "name" = FULL NAME
+  "title": { "style": "full" },
+
+  // Abbreviations per subject (exact WISE name). Subjects not listed keep their full name.
+  "abbreviations": {
+    "VZVRATNO INŽENIRSTVO": "VI",
+    "ESTETIKA IN SEMIOTIKA": "ES",
+  },
+
+  "groups": { "compact": true },   // "X - 1.sk., X - 2.sk." -> "X - sk. 1, 2"
+  "teachers": { "show": true },    // list co-teachers in the description
+  "alarmMinutes": 15,              // reminder before each class; null = none
+}

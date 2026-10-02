@@ -5,6 +5,15 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versions: [Sem
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-10-02
+
+### Added
+- `title.style`: `"full"` (default), `"short"` (abbreviation only), `"name"` (full name only).
+  `title.showFullName: false` still works as `"short"`.
+- Config files may contain `//` / `/* */` comments and trailing commas (`parseConfig`).
+- Web page: bookmarklet that reads the timetable directly on wise-tt.com – no download/upload needed;
+  title style selector.
+
 ## [0.2.0] - 2026-10-01
 
 ### Changed

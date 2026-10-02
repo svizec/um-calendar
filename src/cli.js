@@ -4,7 +4,7 @@
 import { readFileSync, writeFileSync } from 'node:fs';
 import { parseArgs } from 'node:util';
 import { cleanText } from './clean.js';
-import { resolveConfig, applyCliFlags } from './config.js';
+import { resolveConfig, applyCliFlags, parseConfig } from './config.js';
 import { renderCalendar } from './render.js';
 import { fetchTimetable } from './source.js';
 
@@ -16,7 +16,7 @@ Usage:
                                              download (and clean) a timetable
 
 Options:
-  -c, --config <file>     JSON config (see docs/CONFIG.md)
+  -c, --config <file>     JSON config, comments allowed (see docs/CONFIG.md)
   --keep-absences         keep "Službene odsotnosti"
   --keep-reserved         keep "Rezervirani termini"
   --no-alarm              no reminders`;
@@ -34,7 +34,7 @@ const OPTIONS = {
 };
 
 function loadConfig(values) {
-  const user = values.config ? JSON.parse(readFileSync(values.config, 'utf8')) : {};
+  const user = values.config ? parseConfig(readFileSync(values.config, 'utf8')) : {};
   return applyCliFlags(resolveConfig(user), values);
 }
 

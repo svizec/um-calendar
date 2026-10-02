@@ -12,7 +12,11 @@ export const DEFAULTS = Object.freeze({
     reserved: true, // "Rezervirani termini"
   },
   title: {
-    showFullName: true, // "VZVRATNO INŽENIRSTVO (VI) - LV1 (3h)"; false: "VI - LV1 (3h)"
+    // How the subject appears in the event title (only matters for subjects with an abbreviation):
+    //   "full"  -> "VZVRATNO INŽENIRSTVO (VI) - LV1 (3h)"   (default)
+    //   "short" -> "VI - LV1 (3h)"                           (full name moves to the description)
+    //   "name"  -> "VZVRATNO INŽENIRSTVO - LV1 (3h)"         (abbreviation not shown)
+    style: null,
   },
   abbreviations: {}, // { "VZVRATNO INŽENIRSTVO": "VI" }; subjects without an entry keep the full name
   groups: { compact: true }, // "X - 1.sk., X - 2.sk." -> "X - sk. 1, 2"
@@ -37,6 +41,46 @@ export function mergeConfig(base, override) {
 
 export function resolveConfig(userConfig) {
   return mergeConfig(DEFAULTS, userConfig ?? {});
+}
+
+export const TITLE_STYLES = ['full', 'short', 'name'];
+
+/** Title style from config; accepts the older `title.showFullName: false` as "short". */
+export function titleStyle(config) {
+  const t = config?.title ?? {};
+  const style = t.style ?? (t.showFullName === false ? 'short' : 'full');
+  if (!TITLE_STYLES.includes(style)) throw new Error(`title.style must be one of ${TITLE_STYLES.join(', ')} (got "${style}")`);
+  return style;
+}
+
+/**
+ * Parse a config file that may contain comments (JSONC): // line comments, /* block *\/ comments and
+ * trailing commas are allowed. Text inside strings (e.g. URLs with "//") is left untouched.
+ */
+export function parseConfig(text) {
+  let out = '';
+  let inString = false;
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i];
+    if (inString) {
+      out += ch;
+      if (ch === '\\') out += text[++i] ?? '';
+      else if (ch === '"') inString = false;
+    } else if (ch === '"') {
+      inString = true;
+      out += ch;
+    } else if (ch === '/' && text[i + 1] === '/') {
+      while (i < text.length && text[i] !== '\n') i++;
+      out += '\n';
+    } else if (ch === '/' && text[i + 1] === '*') {
+      i = text.indexOf('*/', i + 2);
+      if (i < 0) throw new Error('Unterminated /* comment in config');
+      i++;
+    } else {
+      out += ch;
+    }
+  }
+  return JSON.parse(out.replace(/,(\s*[}\]])/g, '$1'));
 }
 
 /** Apply the common CLI flags (--keep-absences, --keep-reserved, --no-alarm, --url, --t) to a resolved config. */

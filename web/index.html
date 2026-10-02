@@ -15,8 +15,19 @@
       <p class="lead">Iz urnika odstrani bloke zasedenosti, termine preštevilči (LV1, LV2 …), združi skupine in pripiše število šolskih ur. Datoteka se obdela samo v tvojem brskalniku.</p>
     </header>
 
+    <section class="step quick" aria-labelledby="s0">
+      <h2 id="s0"><span class="num">⚡</span> Najhitreje: zaznamek za WISE</h2>
+      <p>Z zaznamkom ti ni treba ničesar prenašati ali nalagati – urnik se prebere neposredno z WISE.</p>
+      <ol class="steps">
+        <li>Povleci gumb <a id="bookmarklet" class="button primary bookmarklet" href="#" title="Povleci me v vrstico z zaznamki">📅 Očisti urnik WISE</a> v vrstico z zaznamki (enkrat; če je ne vidiš: ⌘⇧B / Ctrl+Shift+B).</li>
+        <li>Na <a href="https://www.wise-tt.com/web/umfs/" target="_blank" rel="noopener">wise-tt.com</a> odpri <strong>svoj</strong> urnik (povezava vsebuje <code>t=</code>).</li>
+        <li>Klikni zaznamek – v istem zavihku se odpre ta stran z že naloženim urnikom.</li>
+      </ol>
+      <p class="hint">Zaznamek samo prebere urnik, ki ga že vidiš, in ga preda tej strani; nič se ne pošilja drugam. Na telefonu je ročni način spodaj enostavnejši.</p>
+    </section>
+
     <section class="step" aria-labelledby="s1">
-      <h2 id="s1"><span class="num">1</span> Prenesi svoj urnik</h2>
+      <h2 id="s1"><span class="num">1</span> Ali ročno: prenesi svoj urnik</h2>
       <label for="wise-id">ID urnika ali povezava do urnika</label>
       <div class="row">
         <input id="wise-id" type="text" inputmode="url" autocomplete="off" spellcheck="false" placeholder="npr. 426 ali https://www.wise-tt.com/web/umfs/?t=426">
@@ -42,7 +53,12 @@
         <label class="check"><input type="checkbox" id="opt-reserved" checked> Odstrani rezervirane termine</label>
         <label class="check"><input type="checkbox" id="opt-groups" checked> Združi skupine (sk. 1, 2)</label>
         <label class="check"><input type="checkbox" id="opt-teachers" checked> Pokaži soizvajalce v opisu</label>
-        <label class="check"><input type="checkbox" id="opt-fullname" checked> Polno ime predmeta ob kratici</label>
+        <label class="check select">Naslov
+          <select id="opt-title" aria-label="Oblika naslova">
+            <option value="full">Polno ime (KRATICA)</option>
+            <option value="short">Samo kratica</option>
+            <option value="name">Samo polno ime</option>
+          </select></label>
         <label class="check alarm"><input type="checkbox" id="opt-alarm" checked> Opomnik
           <input type="number" id="opt-alarm-min" min="0" max="1440" value="15" aria-label="Minut pred začetkom"> min prej</label>
       </div>

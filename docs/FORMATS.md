@@ -52,7 +52,7 @@ VALARM: DISPLAY, TRIGGER:-PT15M
   Numbers are recomputed from the full semester each run; they only shift if a session is added or dropped.
 - **School hours:** `floor((duration + 10) / 55)` – 45 min lessons with 10 min breaks.
 - **Groups:** `X - 1.sk., X - 2.sk.` → `X - sk. 1, 2`; three or more consecutive → `sk. 1-3`; different bases joined with `; `.
-- **Title:** with `title.showFullName: false` the title is `VI - LV1 (3h)` and the description starts with the full name.
+- **Title:** `title.style` `"short"` gives `VI - LV1 (3h)` (the description then starts with the full name), `"name"` gives `VZVRATNO INŽENIRSTVO - LV1 (3h)`.
 - **Teachers:** the owner is never listed; co-teachers appear as `Izvajalci:`.
 - **UID:** `umcal-` + WISE key. In the feed the key is the S-number without the date, so a slot moved to another day
   stays the same calendar event (sync updates it instead of delete + create).

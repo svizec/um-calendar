@@ -36,29 +36,67 @@ function updateLink() {
 
 // --- step 2: file ---
 async function loadFile(file) {
-  if (!file) return;
-  state.text = await file.text();
-  state.fileName = file.name;
-  $('file-name').textContent = file.name;
+  if (file) loadText(await file.text(), file.name);
+}
+
+function loadText(text, name) {
+  state.text = text;
+  state.fileName = name;
+  $('file-name').textContent = name;
   renderAbbreviations();
   update();
 }
 
+// --- bookmarklet: runs on wise-tt.com (same origin as the timetable, so no CORS problem), gzips the
+// timetable and opens this page with it in the URL fragment. The fragment never leaves the browser.
+const PAGE_URL = `${location.origin}${location.pathname}`;
+
+function bookmarkletCode() {
+  const page = JSON.stringify(PAGE_URL);
+  const src = `(async()=>{if(!/(^|\\.)wise-tt\\.com$/.test(location.hostname)){alert('Odpri svoj urnik na wise-tt.com in klikni zaznamek tam.');return}`
+    + `const t=new URL(location.href).searchParams.get('t')||(document.querySelector('input[name=t]')||{}).value;`
+    + `if(!t){alert('Ne najdem ID-ja urnika (t=). Odpri svoj urnik.');return}`
+    + `const s=(location.pathname.match(/\\/web\\/([^/]+)/)||[])[1]||'umfs';`
+    + `const r=await fetch('/web/'+s+'/reports?t='+encodeURIComponent(t)+'&lang=sl&format=ics');`
+    + `const z=new Uint8Array(await new Response(r.body.pipeThrough(new CompressionStream('gzip'))).arrayBuffer());`
+    + `let b='';for(let i=0;i<z.length;i+=32768)b+=String.fromCharCode(...z.subarray(i,i+32768));`
+    + `location.href=${page}+'#wise='+encodeURIComponent(t)+'&ics='+btoa(b).replace(/\\+/g,'-').replace(/\\//g,'_').replace(/=+$/,'')})()`;
+  return `javascript:${encodeURIComponent(src)}`;
+}
+
+async function receiveFromWise() {
+  const m = /^#wise=(\d+)&ics=([A-Za-z0-9_-]+)$/.exec(location.hash);
+  if (!m) return;
+  history.replaceState(null, '', PAGE_URL); // drop the data from the address bar
+  try {
+    const bin = atob(m[2].replace(/-/g, '+').replace(/_/g, '/'));
+    const bytes = Uint8Array.from(bin, (c) => c.charCodeAt(0));
+    const text = await new Response(new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'))).text();
+    if (!text.trimStart().startsWith('BEGIN:VCALENDAR')) throw new Error('no calendar');
+    $('wise-id').value = m[1];
+    updateLink();
+    loadText(text, `urnik-${m[1]}.ics`);
+    $('result').scrollIntoView({ behavior: 'smooth' });
+  } catch {
+    $('error').textContent = 'Urnika z WISE ni bilo mogoče prebrati. Poskusi znova ali uporabi ročni način.';
+    $('error').hidden = false;
+  }
+}
+
 // --- step 3: options ---
 function options() {
-  const showFull = $('opt-fullname').checked;
   const alarm = $('opt-alarm').checked ? Math.max(0, Number($('opt-alarm-min').value) || 0) : null;
   return {
     remove: { absences: $('opt-absences').checked, reserved: $('opt-reserved').checked },
     groups: { compact: $('opt-groups').checked },
     teachers: { show: $('opt-teachers').checked },
-    title: { showFullName: showFull },
+    title: { style: $('opt-title').value },
     alarmMinutes: alarm,
     abbreviations: Object.fromEntries(Object.entries(state.abbreviations).filter(([, v]) => v.trim())),
   };
 }
 
-const OPTION_IDS = ['opt-absences', 'opt-reserved', 'opt-groups', 'opt-teachers', 'opt-fullname', 'opt-alarm', 'opt-alarm-min'];
+const OPTION_IDS = ['opt-absences', 'opt-reserved', 'opt-groups', 'opt-teachers', 'opt-title', 'opt-alarm', 'opt-alarm-min'];
 
 function saveOptions() {
   store.save({ options: Object.fromEntries(OPTION_IDS.map((id) => [id, $(id).type === 'checkbox' ? $(id).checked : $(id).value])) });
@@ -179,6 +217,12 @@ function save() {
 // --- wiring ---
 restoreOptions();
 updateLink();
+$('bookmarklet').href = bookmarkletCode();
+$('bookmarklet').addEventListener('click', (e) => {
+  e.preventDefault();
+  alert('Zaznamek povleci v vrstico z zaznamkov, nato ga klikni na svojem urniku na wise-tt.com.');
+});
+receiveFromWise();
 $('wise-id').addEventListener('input', updateLink);
 $('file').addEventListener('change', (e) => loadFile(e.target.files[0]));
 const drop = $('drop');

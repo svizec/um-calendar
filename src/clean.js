@@ -1,7 +1,7 @@
 // Turns WISE events into compact, readable calendar events. Browser-safe.
 
 import { parseDateTime } from './ics.js';
-import { resolveConfig } from './config.js';
+import { resolveConfig, titleStyle } from './config.js';
 import { readWise } from './wise.js';
 
 /**
@@ -89,7 +89,10 @@ export function schoolHours(startValue, endValue, lesson = { minutes: 45, breakM
 function subjectName(e, config) {
   const abbr = lookupAbbreviation(e.subject, config.abbreviations);
   if (!abbr) return e.subject;
-  return config.title.showFullName ? `${e.subject} (${abbr})` : abbr;
+  const style = titleStyle(config);
+  if (style === 'short') return abbr;
+  if (style === 'name') return e.subject;
+  return `${e.subject} (${abbr})`;
 }
 
 function lookupAbbreviation(subject, abbreviations = {}) {
@@ -112,7 +115,7 @@ export function buildTitle(e, label, hours, config) {
 export function buildDescription(e, label, hours, config) {
   const lines = [];
   // Repeat the full subject name only when the title shows just the abbreviation.
-  const abbreviated = lookupAbbreviation(e.subject, config.abbreviations) && !config.title.showFullName;
+  const abbreviated = lookupAbbreviation(e.subject, config.abbreviations) && titleStyle(config) === 'short';
   if (abbreviated) {
     let head = e.subject;
     if (label) head += ` - ${label}`;

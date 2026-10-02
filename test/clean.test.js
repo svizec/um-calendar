@@ -5,7 +5,7 @@ import { cleanText, compactGroups, schoolHours } from '../src/clean.js';
 import { readWise } from '../src/wise.js';
 import { renderCalendar } from '../src/render.js';
 import { parse, findAll, getText } from '../src/ics.js';
-import { feedUrl, parseWiseLink } from '../src/config.js';
+import { feedUrl, parseWiseLink, parseConfig } from '../src/config.js';
 
 const feed = readFileSync(new URL('./fixtures/feed.ics', import.meta.url), 'utf8');
 const exp = readFileSync(new URL('./fixtures/export.ics', import.meta.url), 'utf8');
@@ -52,11 +52,26 @@ test('abbreviations: "FULL NAME (ABBR)" by default, abbreviation only when switc
   const full = cleanText(feed, cfg).events.find((x) => x.summary.startsWith('VZVRATNO INŽENIRSTVO (VI) - LV1 '));
   assert.ok(full);
   assert.match(full.description, /^Skupine: /);
-  const short = cleanText(feed, { ...cfg, title: { showFullName: false } }).events.find((x) => x.key === full.key);
+  const short = cleanText(feed, { ...cfg, title: { style: 'short' } }).events.find((x) => x.key === full.key);
   assert.equal(short.summary, full.summary.replace('VZVRATNO INŽENIRSTVO (VI)', 'VI'));
   assert.match(short.description, /^VZVRATNO INŽENIRSTVO - LV1/);
+  const legacy = cleanText(feed, { ...cfg, title: { showFullName: false } }).events.find((x) => x.key === full.key);
+  assert.equal(legacy.summary, short.summary);
+  const name = cleanText(feed, { ...cfg, title: { style: 'name' } }).events.find((x) => x.key === full.key);
+  assert.equal(name.summary, full.summary.replace(' (VI)', ''));
+  assert.throws(() => cleanText(feed, { ...cfg, title: { style: 'tiny' } }), /title.style/);
   // subjects without an abbreviation show only the full name
   assert.ok(cleanText(feed, cfg).events.some((x) => x.summary.startsWith('ESTETIKA IN SEMIOTIKA - ')));
+});
+
+test('config files may contain comments and trailing commas', () => {
+  const cfg = parseConfig(`{
+    // line comment
+    "source": { "url": "https://www.wise-tt.com/web/umfs/?t=1" }, /* block */
+    "abbreviations": { "A // B": "AB", },
+  }`);
+  assert.equal(cfg.source.url, 'https://www.wise-tt.com/web/umfs/?t=1');
+  assert.deepEqual(cfg.abbreviations, { 'A // B': 'AB' });
 });
 
 test('school hours: 45 min lessons with 10 min breaks', () => {
