@@ -5,6 +5,12 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versions: [Sem
 
 ## [Unreleased]
 
+## [0.4.6] - 2026-10-02
+
+### Changed
+- Web: descriptions are always shown under the title in the preview again; "👁 Prikaži original" sits at the
+  right end of the summary line; removed the note about the generic bookmark icon.
+
 ## [0.4.5] - 2026-10-02
 
 ### Changed

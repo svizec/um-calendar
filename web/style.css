@@ -136,7 +136,7 @@ footer a, .hint a { color: var(--accent); }
 @media (max-width: 560px) { .bm-item { grid-template-columns: 1fr; gap: 4px; } }
 .check.select { gap: 10px; }
 .result-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
-.result-head h2 { margin: 0; }
+.result-head .stats { margin: 0; }
 .check.toggle { white-space: nowrap; font-size: 0.95rem; }
 .check select {
   font: inherit; color: inherit; background: var(--bg); border: 1px solid var(--border);

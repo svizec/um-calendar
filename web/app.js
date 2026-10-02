@@ -305,9 +305,7 @@ function previewRow(e, { original, removed } = {}) {
     } else {
       // title plus the event description (groups, co-teachers) as it will appear in the calendar
       td.append(div('ev-title', e.summary));
-      // compact rows show the description on hover; the comparison view shows it inline
-      if (e.description && original) td.append(div('ev-desc', e.description));
-      else if (e.description) tr.title = e.description;
+      if (e.description) td.append(div('ev-desc', e.description));
       if (original) {
         const raw = original.raw;
         const text = [raw.summary, raw.description, raw.location && raw.location !== e.location ? `Prostor: ${raw.location}` : null].filter(Boolean).join('\n');
