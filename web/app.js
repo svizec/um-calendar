@@ -201,6 +201,22 @@ function renderAbbreviations() {
       row.abbr = abbr.value;
       abbreviationsChanged();
     });
+    // Tab (or Enter) accepts the suggested abbreviation shown as placeholder in an empty field and
+    // jumps to the next subject's abbreviation, so a whole list can be confirmed with Tab, Tab, Tab.
+    abbr.addEventListener('keydown', (e) => {
+      if (!((e.key === 'Tab' && !e.shiftKey) || e.key === 'Enter')) return;
+      if (!abbr.value && abbr.placeholder) {
+        abbr.value = abbr.placeholder;
+        abbr.dispatchEvent(new Event('input'));
+      }
+      const next = abbr.closest('.abbr-row')?.nextElementSibling?.querySelectorAll('input')[1];
+      if (next) {
+        e.preventDefault();
+        next.focus();
+      } else if (e.key === 'Enter') {
+        e.preventDefault();
+      }
+    });
     remove.addEventListener('click', () => {
       state.abbrList.splice(i, 1);
       abbreviationsChanged();

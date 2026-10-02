@@ -123,3 +123,5 @@ footer a, .hint a { color: var(--accent); }
   font: inherit; color: inherit; background: var(--bg); border: 1px solid var(--border);
   border-radius: 8px; padding: 5px 8px;
 }
+
+kbd { font: inherit; font-size: 0.85em; border: 1px solid var(--border); border-bottom-width: 2px; border-radius: 4px; padding: 0 4px; }
