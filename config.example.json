@@ -1,0 +1,13 @@
+{
+  "$comment": "Example umcal config. All keys are optional; see docs/CONFIG.md.",
+  "source": { "school": "umfs", "t": 426, "lang": "sl" },
+  "remove": { "absences": true, "reserved": true },
+  "title": { "showFullName": false },
+  "abbreviations": {
+    "VZVRATNO INŽENIRSTVO": "VI",
+    "ESTETIKA IN SEMIOTIKA": "ES"
+  },
+  "groups": { "compact": true },
+  "teachers": { "show": true },
+  "alarmMinutes": 15
+}

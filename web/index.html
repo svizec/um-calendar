@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="sl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Čiščenje urnika WISE</title>
+  <meta name="description" content="Očisti urnik WISE (UM FS): odstrani zasedenost, prešteje vaje, združi skupine in izračuna šolske ure.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect x='3' y='5' width='26' height='24' rx='4' fill='%232f6f4f'/><rect x='3' y='5' width='26' height='7' rx='3' fill='%23214f38'/><path d='M10 19l4 4 8-8' stroke='white' stroke-width='3' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main>
+    <header>
+      <h1>Čiščenje urnika WISE</h1>
+      <p class="lead">Iz urnika odstrani bloke zasedenosti, termine preštevilči (LV1, LV2 …), združi skupine in pripiše število šolskih ur. Datoteka se obdela samo v tvojem brskalniku.</p>
+    </header>
+
+    <section class="step" aria-labelledby="s1">
+      <h2 id="s1"><span class="num">1</span> Prenesi svoj urnik</h2>
+      <label for="wise-id">ID urnika ali povezava do urnika</label>
+      <div class="row">
+        <input id="wise-id" type="text" inputmode="url" autocomplete="off" spellcheck="false" placeholder="npr. 426 ali https://www.wise-tt.com/web/umfs/?t=426">
+        <a id="download-link" class="button secondary" aria-disabled="true" target="_blank" rel="noopener">Prenesi .ics z WISE</a>
+      </div>
+      <p class="hint" id="id-hint">ID je številka za <code>t=</code> v povezavi do tvojega urnika na wise-tt.com.</p>
+    </section>
+
+    <section class="step" aria-labelledby="s2">
+      <h2 id="s2"><span class="num">2</span> Naloži preneseno datoteko</h2>
+      <label id="drop" class="drop" for="file">
+        <input id="file" type="file" accept=".ics,text/calendar">
+        <span class="drop-text"><strong>Spusti datoteko .ics sem</strong> ali klikni za izbiro</span>
+        <span class="drop-file" id="file-name"></span>
+      </label>
+      <p class="error" id="error" role="alert" hidden></p>
+    </section>
+
+    <section class="step" aria-labelledby="s3">
+      <h2 id="s3"><span class="num">3</span> Nastavitve</h2>
+      <div class="options">
+        <label class="check"><input type="checkbox" id="opt-absences" checked> Odstrani službene odsotnosti</label>
+        <label class="check"><input type="checkbox" id="opt-reserved" checked> Odstrani rezervirane termine</label>
+        <label class="check"><input type="checkbox" id="opt-groups" checked> Združi skupine (sk. 1, 2)</label>
+        <label class="check"><input type="checkbox" id="opt-teachers" checked> Pokaži soizvajalce v opisu</label>
+        <label class="check"><input type="checkbox" id="opt-fullname" checked> Polno ime predmeta ob kratici</label>
+        <label class="check alarm"><input type="checkbox" id="opt-alarm" checked> Opomnik
+          <input type="number" id="opt-alarm-min" min="0" max="1440" value="15" aria-label="Minut pred začetkom"> min prej</label>
+      </div>
+      <details id="abbr-box">
+        <summary>Kratice predmetov <span class="muted" id="abbr-count"></span></summary>
+        <p class="hint">Predmeti brez kratice ostanejo s polnim imenom. Kratice si brskalnik zapomni.</p>
+        <div id="abbr-list" class="abbr-list"><p class="muted">Najprej naloži urnik.</p></div>
+      </details>
+    </section>
+
+    <section class="step result" aria-labelledby="s4" id="result" hidden>
+      <h2 id="s4"><span class="num">4</span> Prenesi očiščen urnik</h2>
+      <p id="stats" class="stats"></p>
+      <button id="save" class="button primary" type="button">Prenesi očiščen urnik (.ics)</button>
+      <p class="hint">Datoteko uvoziš v koledar (Apple Koledar: Datoteka → Uvozi; Outlook: Datoteka → Odpri in izvozi → Uvoz). Za samodejne posodobitve glej <a href="https://github.com/svizec/um-calendar">README</a>.</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Datum</th><th>Čas</th><th>Naslov</th><th>Prostor</th></tr></thead>
+          <tbody id="preview"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <footer>
+      <a href="https://github.com/svizec/um-calendar">github.com/svizec/um-calendar</a>
+    </footer>
+  </main>
+  <script type="module" src="app.js"></script>
+</body>
+</html>

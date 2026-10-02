@@ -1,0 +1,32 @@
+# Changelog
+
+All notable changes to this project are documented here.
+Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versions: [SemVer](https://semver.org/).
+
+## [Unreleased]
+
+## [0.2.0] - 2026-10-01
+
+### Changed
+- Titles show `FULL NAME (ABBR) - LV1 (2h)` by default (`title.showFullName: true`); the description no
+  longer repeats the title in that case.
+
+### Removed
+- iCloud/CalDAV sync (`umcal calendars`, `umcal sync`, `caldav.js`, `sync.js`, `credentials.js`) moved
+  to the private sync repo. The `sync` config section is no longer part of the defaults.
+
+### Added
+- Public API for other tools: ICS helpers, `normalizeTzid`, `applyCliFlags` from `um-calendar`; `fetchTimetable` from `um-calendar/source`.
+
+## [0.1.0] - 2026-10-01
+
+### Added
+- Reader for the current WISE feed format and the older one-off export format.
+- Cleaning: removes "Službene odsotnosti" and "Rezervirani termini" (separate switches), numbers
+  sessions per subject/type/groups (`RV 1` treated as `RV`), counts school hours, compacts groups,
+  subject abbreviations shown as `FULL NAME (ABBR)` (switchable to abbreviation only), co-teachers, reminders.
+- `umcal` CLI: `clean`, `fetch`, `calendars`, `sync` (dry run by default, `--apply`, `--expect-hash`, safety blocks).
+- Minimal CalDAV client for iCloud; sync touches only `umcal-` events in one exactly named calendar,
+  treats moved slots as updates and never deletes past events.
+- Web page for colleagues (GitHub Pages): drop a WISE `.ics`, download the cleaned one.
+- Anonymized fixtures from a public timetable and `node:test` suites.

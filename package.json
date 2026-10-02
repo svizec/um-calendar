@@ -1,0 +1,20 @@
+{
+  "name": "um-calendar",
+  "version": "0.2.0",
+  "description": "Clean WISE Timetable (UM FS) calendars: remove busy blocks, number sessions, count school hours.",
+  "type": "module",
+  "private": true,
+  "bin": { "umcal": "src/cli.js" },
+  "exports": {
+    ".": "./src/index.js",
+    "./source": "./src/source.js"
+  },
+  "files": ["src"],
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "test": "node --test",
+    "web": "node scripts/serve-web.js",
+    "fixtures": "node scripts/make-fixtures.js"
+  },
+  "repository": { "type": "git", "url": "git+https://github.com/svizec/um-calendar.git" }
+}
