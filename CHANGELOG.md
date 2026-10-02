@@ -5,6 +5,12 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versions: [Sem
 
 ## [Unreleased]
 
+## [0.3.2] - 2026-10-02
+
+### Changed
+- Web preview shows each event's description (groups, co-teachers) under its title, so options like
+  "Združi skupine" are visible before downloading.
+
 ## [0.3.1] - 2026-10-02
 
 ### Added

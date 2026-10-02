@@ -252,12 +252,24 @@ function update() {
     `${owner ? owner + ': ' : ''}${events.length} terminov · odstranjenih ${removed.absences} odsotnosti in ${removed.reserved} rezervacij`;
   const rows = events.map((e) => {
     const tr = document.createElement('tr');
-    for (const text of [fmtDate(e.start.value), `${fmtTime(e.start.value)}–${fmtTime(e.end.value)}`, e.summary, e.location ?? '']) {
+    for (const text of [fmtDate(e.start.value), `${fmtTime(e.start.value)}–${fmtTime(e.end.value)}`, null, e.location ?? '']) {
       const td = document.createElement('td');
-      td.textContent = text;
+      if (text !== null) td.textContent = text;
+      else {
+        // title plus the event description (groups, co-teachers) as it will appear in the calendar
+        const title = document.createElement('div');
+        title.className = 'ev-title';
+        title.textContent = e.summary;
+        td.append(title);
+        if (e.description) {
+          const desc = document.createElement('div');
+          desc.className = 'ev-desc';
+          desc.textContent = e.description;
+          td.append(desc);
+        }
+      }
       tr.append(td);
     }
-    tr.title = e.description;
     return tr;
   });
   $('preview').replaceChildren(...rows);

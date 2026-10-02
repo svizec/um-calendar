@@ -99,6 +99,9 @@ summary { cursor: pointer; font-weight: 600; }
 table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
 th, td { text-align: left; padding: 7px 10px; border-bottom: 1px solid var(--border); white-space: nowrap; }
 td:nth-child(3) { white-space: normal; min-width: 220px; }
+.ev-title { font-weight: 600; }
+.ev-desc { color: var(--muted); font-size: 0.85rem; white-space: pre-line; margin-top: 2px; }
+td { vertical-align: top; }
 th { background: var(--accent-soft); font-weight: 600; position: sticky; top: 0; }
 tbody tr:last-child td { border-bottom: none; }
 footer { text-align: center; margin-top: 24px; font-size: 0.9rem; }
