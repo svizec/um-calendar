@@ -110,8 +110,10 @@ function instantBookmarkletCode() {
 }
 
 function refreshBookmarklets() {
-  $('bookmarklet').href = bookmarkletCode();
-  $('bookmarklet-instant').href = instantBookmarkletCode();
+  const open = bookmarkletCode();
+  const instant = instantBookmarkletCode();
+  for (const a of document.querySelectorAll('.js-bm-open')) a.href = open;
+  for (const a of document.querySelectorAll('.js-bm-instant')) a.href = instant;
 }
 
 async function receiveFromWise() {
@@ -349,8 +351,8 @@ restoreOptions();
 updateLink();
 renderAbbreviations();
 refreshBookmarklets();
-for (const id of ['bookmarklet', 'bookmarklet-instant']) {
-  $(id).addEventListener('click', (e) => {
+for (const a of document.querySelectorAll('.bookmarklet')) {
+  a.addEventListener('click', (e) => {
     e.preventDefault();
     alert('Zaznamek povleci v vrstico z zaznamki, nato ga klikni na svojem urniku na wise-tt.com.');
   });

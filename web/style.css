@@ -126,7 +126,14 @@ footer a, .hint a { color: var(--accent); }
 .quick { border-color: var(--accent); }
 .quick p { margin: 0 0 8px; }
 .steps { margin: 8px 0; padding-left: 22px; display: grid; gap: 8px; }
-.bookmarklet { padding: 4px 12px; cursor: grab; }
+.bookmarklet { cursor: grab; white-space: nowrap; min-height: 40px; padding: 8px 14px; }
+/* the icon is decoration only, so it is not copied into the bookmark name */
+.bookmarklet[data-icon]::before { content: attr(data-icon); margin-right: 6px; }
+.bm-list { display: grid; gap: 10px; margin: 10px 0 14px; }
+.bm-item { display: grid; grid-template-columns: 230px 1fr; gap: 12px; align-items: center; }
+.bm-item .bookmarklet { width: 100%; }
+.bm-item span { color: var(--muted); font-size: 0.92rem; }
+@media (max-width: 560px) { .bm-item { grid-template-columns: 1fr; gap: 4px; } }
 .check.select { gap: 10px; }
 .check.wide { grid-column: span 2; white-space: nowrap; }
 @media (max-width: 560px) { .check.wide { grid-column: auto; } }

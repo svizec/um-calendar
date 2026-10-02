@@ -5,6 +5,13 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versions: [Sem
 
 ## [Unreleased]
 
+## [0.4.4] - 2026-10-02
+
+### Changed
+- Web: both bookmarklets are offered in the top box with equal-height buttons and clearer names
+  ("Počisti urnik WISE", "Prenesi očiščen urnik"). Their icons are CSS-only, so bookmark names contain no
+  emoji (browsers always add a generic icon to bookmarklets).
+
 ## [0.4.3] - 2026-10-02
 
 ### Changed

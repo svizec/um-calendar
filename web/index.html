@@ -17,13 +17,19 @@
 
     <section class="step quick" aria-labelledby="s0">
       <h2 id="s0"><span class="num">⚡</span> Najhitreje: zaznamek za WISE</h2>
-      <p>Z zaznamkom ti ni treba ničesar prenašati ali nalagati – urnik se prebere neposredno z WISE. Obstajata dva:</p>
-      <ul class="steps">
-        <li><a id="bookmarklet" class="button secondary bookmarklet" href="#" title="Povleci me v vrstico z zaznamki">📅 Odpri urnik WISE tukaj</a> – odpre to stran z naloženim urnikom; nastavitve izbereš sproti.</li>
-        <li><a class="button primary" href="#s3">⬇️ Takoj prenesi</a> – prenese očiščen urnik brez vmesne strani, z nastavitvami, ki jih izbereš v 3. koraku (gumb je tam).</li>
-      </ul>
+      <p>Z zaznamkom ti ni treba ničesar prenašati ali nalagati – urnik se prebere neposredno z WISE. Izberi enega (ali oba):</p>
+      <div class="bm-list">
+        <div class="bm-item">
+          <a class="button secondary bookmarklet js-bm-open" data-icon="📅" href="#" title="Povleci me v vrstico z zaznamki">Počisti urnik WISE</a>
+          <span>Na WISE odpre to stran z naloženim urnikom. Nastavitve in kratice izbereš tukaj, nato preneseš očiščeno datoteko.</span>
+        </div>
+        <div class="bm-item">
+          <a class="button primary bookmarklet js-bm-instant" data-icon="⬇️" href="#" title="Povleci me v vrstico z zaznamki">Prenesi očiščen urnik</a>
+          <span>Na WISE takoj prenese očiščeno datoteko – brez vmesne strani. Uporabi nastavitve in kratice iz 3. koraka, kakršne so v trenutku, ko zaznamek povlečeš.</span>
+        </div>
+      </div>
       <ol class="steps">
-        <li>Gumb povleci v vrstico z zaznamki (enkrat; če je ne vidiš: ⌘⇧B / Ctrl+Shift+B).</li>
+        <li>Gumb povleci v vrstico z zaznamki (če je ne vidiš: ⌘⇧B / Ctrl+Shift+B). Brskalnik zaznamku sam doda splošno ikono 🌐 – drugače pri zaznamkih te vrste ne gre.</li>
         <li>Na <a href="https://www.wise-tt.com/web/umfs/" target="_blank" rel="noopener">wise-tt.com</a> odpri <strong>svoj</strong> urnik (povezava vsebuje <code>t=</code>) in klikni zaznamek.</li>
       </ol>
       <p class="hint">Zaznamek samo prebere urnik, ki ga že vidiš; nič se ne pošilja drugam. Na telefonu je ročni način spodaj enostavnejši.</p>
@@ -78,7 +84,7 @@
       </details>
       <div class="instant">
         <p><strong>Zaznamek s temi nastavitvami:</strong>
-          <a id="bookmarklet-instant" class="button primary bookmarklet" href="#" title="Povleci me v vrstico z zaznamki">⬇️ Prenesi urnik WISE</a></p>
+          <a class="button primary bookmarklet js-bm-instant" data-icon="⬇️" href="#" title="Povleci me v vrstico z zaznamki">Prenesi očiščen urnik</a></p>
         <p class="hint">Povleci ga v zaznamke in ga klikni na svojem urniku na wise-tt.com – očiščena datoteka se prenese takoj. Ko spremeniš nastavitve ali kratice, ga povleci znova (starega izbriši).</p>
       </div>
     </section>
