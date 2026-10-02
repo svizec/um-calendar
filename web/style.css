@@ -103,6 +103,11 @@ th, td { text-align: left; padding: 7px 10px; border-bottom: 1px solid var(--bor
 td:nth-child(3) { white-space: normal; min-width: 220px; }
 .ev-title { font-weight: 600; }
 .ev-desc { color: var(--muted); font-size: 0.85rem; white-space: pre-line; margin-top: 2px; }
+.ev-orig { font-size: 0.8rem; white-space: pre-line; margin-top: 6px; padding: 4px 8px; border-left: 3px solid var(--border);
+  color: var(--muted); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+.ev-orig::before { content: 'WISE: '; font-weight: 700; }
+tr.removed td { color: var(--muted); }
+tr.removed .ev-orig { text-decoration: line-through; }
 td { vertical-align: top; }
 th { background: var(--accent-soft); font-weight: 600; position: sticky; top: 0; }
 tbody tr:last-child td { border-bottom: none; }

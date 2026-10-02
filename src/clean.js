@@ -19,7 +19,8 @@ export function cleanText(text, userConfig) {
   const wise = readWise(text);
   const owner = config.owner ?? wise.owner;
   const result = cleanEvents(wise.events, { ...config, owner });
-  return { ...result, owner, format: wise.format, timezones: wise.timezones, config };
+  // `source` = all WISE events (incl. removed busy blocks) with their original text, keyed like `events`
+  return { ...result, source: wise.events, owner, format: wise.format, timezones: wise.timezones, config };
 }
 
 /** @returns {{ events: CleanEvent[], removed: { absences: number, reserved: number } }} */

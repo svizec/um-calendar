@@ -148,7 +148,8 @@ function options() {
   };
 }
 
-const OPTION_IDS = ['opt-absences', 'opt-reserved', 'opt-groups', 'opt-teachers', 'opt-title', 'opt-alarm', 'opt-alarm-min'];
+// opt-original only changes the preview; it is not part of options() and not baked into bookmarklets
+const OPTION_IDS = ['opt-absences', 'opt-reserved', 'opt-groups', 'opt-teachers', 'opt-title', 'opt-alarm', 'opt-alarm-min', 'opt-original'];
 
 function saveOptions() {
   store.save({ options: Object.fromEntries(OPTION_IDS.map((id) => [id, $(id).type === 'checkbox' ? $(id).checked : $(id).value])) });
@@ -282,30 +283,44 @@ function update() {
   const { events, removed, owner } = lastResult;
   $('stats').textContent =
     `${owner ? owner + ': ' : ''}${events.length} terminov · odstranjenih ${removed.absences} odsotnosti in ${removed.reserved} rezervacij`;
-  const rows = events.map((e) => {
-    const tr = document.createElement('tr');
-    for (const text of [fmtDate(e.start.value), `${fmtTime(e.start.value)}–${fmtTime(e.end.value)}`, null, e.location ?? '']) {
-      const td = document.createElement('td');
-      if (text !== null) td.textContent = text;
-      else {
-        // title plus the event description (groups, co-teachers) as it will appear in the calendar
-        const title = document.createElement('div');
-        title.className = 'ev-title';
-        title.textContent = e.summary;
-        td.append(title);
-        if (e.description) {
-          const desc = document.createElement('div');
-          desc.className = 'ev-desc';
-          desc.textContent = e.description;
-          td.append(desc);
-        }
-      }
-      tr.append(td);
-    }
-    return tr;
-  });
+  const rows = $('opt-original').checked ? comparisonRows(lastResult) : events.map((e) => previewRow(e));
   $('preview').replaceChildren(...rows);
   $('result').hidden = false;
+}
+
+const div = (cls, text) => Object.assign(document.createElement('div'), { className: cls, textContent: text });
+
+/** One preview row. `original` (WISE event) adds the original text; `removed` marks a dropped block. */
+function previewRow(e, { original, removed } = {}) {
+  const tr = document.createElement('tr');
+  if (removed) tr.className = 'removed';
+  const cells = [fmtDate(e.start.value), `${fmtTime(e.start.value)}–${fmtTime(e.end.value)}`, null, removed ? '' : e.location ?? ''];
+  for (const text of cells) {
+    const td = document.createElement('td');
+    if (text !== null) td.textContent = text;
+    else if (removed) {
+      td.append(div('ev-title', '🗑 Odstranjeno'), div('ev-orig', original.raw.summary || '(prazen blok zasedenosti)'));
+    } else {
+      // title plus the event description (groups, co-teachers) as it will appear in the calendar
+      td.append(div('ev-title', e.summary));
+      if (e.description) td.append(div('ev-desc', e.description));
+      if (original) {
+        const raw = original.raw;
+        const text = [raw.summary, raw.description, raw.location && raw.location !== e.location ? `Prostor: ${raw.location}` : null].filter(Boolean).join('\n');
+        td.append(div('ev-orig', text || '(brez besedila)'));
+      }
+    }
+    tr.append(td);
+  }
+  return tr;
+}
+
+/** All WISE events in order: cleaned ones with their original text, removed ones struck through. */
+function comparisonRows(result) {
+  const cleaned = new Map(result.events.map((e) => [e.key, e]));
+  return [...result.source]
+    .sort((a, b) => a.start.value.localeCompare(b.start.value))
+    .map((o) => (cleaned.has(o.key) ? previewRow(cleaned.get(o.key), { original: o }) : previewRow(o, { original: o, removed: true })));
 }
 
 const DAYS = ['ned', 'pon', 'tor', 'sre', 'čet', 'pet', 'sob'];

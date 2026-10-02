@@ -10,6 +10,14 @@ import { feedUrl, parseWiseLink, parseConfig } from '../src/config.js';
 const feed = readFileSync(new URL('./fixtures/feed.ics', import.meta.url), 'utf8');
 const exp = readFileSync(new URL('./fixtures/export.ics', import.meta.url), 'utf8');
 
+test('keeps the original WISE text of every event for comparison', () => {
+  const r = cleanText(feed);
+  assert.equal(r.source.length, readWise(feed).events.length);
+  const first = r.source.find((e) => e.key === r.events[0].key);
+  assert.match(first.raw.summary, /\((PR|SE|LV|RV|AV)\)$/);
+  assert.match(first.raw.description, /^Predavatelji: /);
+});
+
 test('detects both WISE formats and the owner', () => {
   assert.equal(readWise(feed).format, 'feed');
   assert.equal(readWise(exp).format, 'export');

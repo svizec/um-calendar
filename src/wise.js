@@ -19,6 +19,7 @@ const FEED_SUMMARY = /^(.*?)\s*\(([A-ZČŠŽ]{1,5})(?:\s*(\d+))?\)$/;
  *   kind: 'class'|'absence'|'reserved',
  *   subject: string|null, type: string|null, rawType: string|null,
  *   location: string|null, groups: string[], teachers: string[],
+ *   raw: { summary: string|null, location: string|null, description: string|null },
  * }} WiseEvent
  */
 
@@ -82,7 +83,7 @@ function readFeedEvent(vevent) {
   const m = /^(S\d+)-\d{8}@/.exec(uid);
   const key = m ? m[1] : uid.replace(/@.*$/, '');
 
-  const base = { key, sourceUid: uid, ...times, teachers, groups };
+  const base = { key, sourceUid: uid, ...times, teachers, groups, raw: rawText(vevent) };
   if (!summary || summary === ABSENCE_TITLE) return { ...base, kind: 'absence', subject: null, type: null, rawType: null, location: null };
   if (summary === RESERVED_TITLE) return { ...base, kind: 'reserved', subject: null, type: null, rawType: null, location: null };
 
@@ -102,7 +103,7 @@ function readExportEvent(vevent) {
   if (!times) return null;
   const uid = getText(vevent, 'UID') ?? '';
   const summary = (getText(vevent, 'SUMMARY') ?? '').trim();
-  const base = { key: uid, sourceUid: uid, ...times, teachers: [], groups: [] };
+  const base = { key: uid, sourceUid: uid, ...times, teachers: [], groups: [], raw: rawText(vevent) };
   // In this format busy blocks carry no SUMMARY; they correspond to "Službene odsotnosti".
   if (!summary || summary.toLowerCase() === 'null') {
     return { ...base, kind: 'absence', subject: null, type: null, rawType: null, location: null };
@@ -126,6 +127,11 @@ function readExportEvent(vevent) {
     location,
     groups: tm ? groups : [first, ...groups].filter(Boolean),
   };
+}
+
+/** The event as WISE wrote it (unescaped), for showing original vs. cleaned. */
+function rawText(vevent) {
+  return { summary: getText(vevent, 'SUMMARY'), location: getText(vevent, 'LOCATION'), description: getText(vevent, 'DESCRIPTION') };
 }
 
 function detectOwner(cal, prodid, format, events) {

@@ -5,6 +5,14 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versions: [Sem
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-10-02
+
+### Added
+- `readWise` keeps each event's original text (`raw.summary`, `raw.description`, `raw.location`);
+  `cleanText` returns all source events as `source`.
+- Web: "👁 Prikaži original v predogledu" shows the original WISE text under every cleaned event and
+  lists removed busy blocks (struck through). Preview only; not part of the downloaded file or bookmarklets.
+
 ## [0.3.4] - 2026-10-02
 
 ### Changed
