@@ -32,6 +32,13 @@ jobs:
           mkdir -p _site/src
           cp -r web/. _site/
           cp src/index.js src/ics.js src/wise.js src/clean.js src/render.js src/config.js _site/src/
+      - name: Version asset URLs (GitHub Pages lets browsers cache files for 10 minutes)
+        run: |
+          v="${GITHUB_SHA::8}"
+          sed -i -E "s#(href=\"style\.css)#\1?v=$v#; s#(src=\"app\.js)#\1?v=$v#" _site/index.html
+          sed -i -E "s#\./src/index\.js#./src/index.js?v=$v#g" _site/app.js
+          sed -i -E "s#from '\./([a-z]+)\.js'#from './\1.js?v=$v'#g" _site/src/*.js
+          grep -c "?v=$v" _site/index.html _site/app.js _site/src/*.js
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

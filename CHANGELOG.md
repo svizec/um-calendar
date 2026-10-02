@@ -5,6 +5,16 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versions: [Sem
 
 ## [Unreleased]
 
+## [0.4.7] - 2026-10-02
+
+### Fixed
+- Pages build adds `?v=<commit>` to the stylesheet, scripts and module imports, so browsers load a new
+  version right after deployment (GitHub Pages lets them cache files for 10 minutes, which mixed old
+  scripts with new pages).
+
+### Changed
+- Web: the switch is labelled "Prikaži original" (no icon).
+
 ## [0.4.6] - 2026-10-02
 
 ### Changed
