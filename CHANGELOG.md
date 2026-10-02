@@ -5,6 +5,12 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versions: [Sem
 
 ## [Unreleased]
 
+## [0.4.2] - 2026-10-02
+
+### Fixed
+- Web: the loaded-file box with the ✕ button was always visible (its `display: flex` overrode `hidden`),
+  so it stayed on screen before loading and after removing the file.
+
 ## [0.4.1] - 2026-10-02
 
 ### Changed

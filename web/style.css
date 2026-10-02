@@ -31,6 +31,8 @@
 }
 
 * { box-sizing: border-box; }
+/* keep the hidden attribute effective on elements that set their own display */
+[hidden] { display: none !important; }
 body {
   margin: 0;
   background: var(--bg);

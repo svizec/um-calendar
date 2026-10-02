@@ -1,6 +1,6 @@
 {
   "name": "um-calendar",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "Clean WISE Timetable (UM FS) calendars: remove busy blocks, number sessions, count school hours.",
   "type": "module",
   "private": true,
