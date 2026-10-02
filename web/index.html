@@ -44,13 +44,17 @@
       <label id="drop" class="drop" for="file">
         <input id="file" type="file" accept=".ics,text/calendar">
         <span class="drop-text"><strong>Spusti datoteko .ics sem</strong> ali klikni za izbiro</span>
-        <span class="drop-file" id="file-name"></span>
       </label>
+      <div class="loaded" id="loaded" hidden>
+        <span>📄 <span id="file-name"></span></span>
+        <button id="file-clear" class="button secondary remove" type="button" title="Odstrani datoteko" aria-label="Odstrani naloženi urnik">✕</button>
+      </div>
       <p class="error" id="error" role="alert" hidden></p>
     </section>
 
     <section class="step" aria-labelledby="s3">
       <h2 id="s3"><span class="num">3</span> Nastavitve</h2>
+      <p class="notice" id="load-notice" hidden></p>
       <div class="options">
         <label class="check"><input type="checkbox" id="opt-absences" checked> Odstrani službene odsotnosti</label>
         <label class="check"><input type="checkbox" id="opt-reserved" checked> Odstrani rezervirane termine</label>

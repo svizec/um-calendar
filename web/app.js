@@ -43,16 +43,36 @@ function updateLink() {
 
 // --- step 2: file ---
 async function loadFile(file) {
-  if (file) loadText(await file.text(), file.name);
+  if (file) loadText(await file.text(), file.name, `Naložena je datoteka »${file.name}«.`);
 }
 
-function loadText(text, name) {
+/** @param {string} source sentence shown above the settings, e.g. where the timetable came from */
+function loadText(text, name, source) {
   state.text = text;
   state.fileName = name;
   $('file-name').textContent = name;
+  $('loaded').hidden = false;
+  $('load-notice').textContent = `${source} Preveri nastavitve in kratice, nato spodaj klikni »Prenesi očiščen urnik«.`;
+  $('load-notice').hidden = false;
   mergeSubjectsFromFile();
   renderAbbreviations();
   update();
+}
+
+function clearFile() {
+  // drop subjects that came only from this timetable and never got an abbreviation
+  const fromFile = new Set((state.subjects ?? []).map((s) => s.toUpperCase()));
+  state.abbrList = state.abbrList.filter((r) => r.abbr.trim() || !fromFile.has(r.subject.trim().toUpperCase()));
+  saveAbbrList();
+  Object.assign(state, { text: null, fileName: null, subjects: [] });
+  lastResult = null;
+  $('file').value = '';
+  $('loaded').hidden = true;
+  $('load-notice').hidden = true;
+  $('error').hidden = true;
+  $('result').hidden = true;
+  $('preview').replaceChildren();
+  renderAbbreviations();
 }
 
 // --- bookmarklet: runs on wise-tt.com (same origin as the timetable, so no CORS problem), gzips the
@@ -105,11 +125,7 @@ async function receiveFromWise() {
     if (!text.trimStart().startsWith('BEGIN:VCALENDAR')) throw new Error('no calendar');
     $('wise-id').value = m[1];
     updateLink();
-    loadText(text, `urnik-${m[1]}.ics`);
-    const notice = document.createElement('p');
-    notice.className = 'notice';
-    notice.textContent = `Urnik ${m[1]} je naložen z WISE. Preveri nastavitve in kratice, nato spodaj klikni »Prenesi očiščen urnik«.`;
-    $('s3').after(notice);
+    loadText(text, `urnik-${m[1]}.ics`, `Urnik ${m[1]} je naložen neposredno z WISE.`);
     $('s3').scrollIntoView({ behavior: 'smooth' });
   } catch {
     $('error').textContent = 'Urnika z WISE ni bilo mogoče prebrati. Poskusi znova ali uporabi ročni način.';
@@ -330,6 +346,7 @@ $('abbr-add').addEventListener('click', () => {
 receiveFromWise();
 $('wise-id').addEventListener('input', updateLink);
 $('file').addEventListener('change', (e) => loadFile(e.target.files[0]));
+$('file-clear').addEventListener('click', clearFile);
 const drop = $('drop');
 drop.addEventListener('dragover', (e) => { e.preventDefault(); drop.classList.add('over'); });
 drop.addEventListener('dragleave', () => drop.classList.remove('over'));

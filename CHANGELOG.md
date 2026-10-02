@@ -5,6 +5,15 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versions: [Sem
 
 ## [Unreleased]
 
+## [0.3.4] - 2026-10-02
+
+### Changed
+- Web: the notice above the settings says where the timetable came from (WISE via bookmarklet or the
+  uploaded file name) and is replaced on every load instead of piling up.
+
+### Added
+- Web: ✕ button to remove the loaded timetable (also drops its subjects that have no abbreviation).
+
 ## [0.3.3] - 2026-10-02
 
 ### Added
