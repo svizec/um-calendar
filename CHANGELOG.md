@@ -5,6 +5,11 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versions: [Sem
 
 ## [Unreleased]
 
+## [0.4.5] - 2026-10-02
+
+### Changed
+- Web: the original-text switch moved to the right of the step 4 heading as "👁 Prikaži original".
+
 ## [0.4.4] - 2026-10-02
 
 ### Changed

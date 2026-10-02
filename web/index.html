@@ -74,7 +74,6 @@
           </select></label>
         <label class="check alarm"><input type="checkbox" id="opt-alarm" checked> Opomnik
           <input type="number" id="opt-alarm-min" min="0" max="1440" value="15" aria-label="Minut pred začetkom"> min prej</label>
-        <label class="check wide"><input type="checkbox" id="opt-original"> 👁 Prikaži original v predogledu</label>
       </div>
       <details id="abbr-box" open>
         <summary>Kratice predmetov <span class="muted" id="abbr-count"></span></summary>
@@ -90,7 +89,10 @@
     </section>
 
     <section class="step result" aria-labelledby="s4" id="result" hidden>
-      <h2 id="s4"><span class="num">4</span> Prenesi očiščen urnik</h2>
+      <div class="result-head">
+        <h2 id="s4"><span class="num">4</span> Prenesi očiščen urnik</h2>
+        <label class="check toggle" title="Pod vsakim terminom pokaže originalno besedilo iz WISE in odstranjene bloke"><input type="checkbox" id="opt-original"> 👁 Prikaži original</label>
+      </div>
       <p id="stats" class="stats"></p>
       <button id="save" class="button primary" type="button">Prenesi očiščen urnik (.ics)</button>
       <p class="hint">Datoteko uvoziš v koledar (Apple Koledar: Datoteka → Uvozi; Outlook: Datoteka → Odpri in izvozi → Uvoz). Za samodejne posodobitve glej <a href="https://github.com/svizec/um-calendar">README</a>.</p>
